@@ -3,15 +3,15 @@ C++ Unreal Engine 4 project
 
 ## GDD
 
-**Nombre:** Policia Policia
-**Versión de Unreal:** 4.23.1
-**Género:** Survival / Shooter
-**Referencias:** September 12th, Hitman 2, COD BO2 Zombies, Tombo Survivor, COD MW2 - No Russian
-"No hay mejor vehiculo que la empatía que un juego" - Humberto Cervera
+**Nombre:** Policia Policia /
+**Versión de Unreal:** 4.23.1 /
+**Género:** Survival / Shooter /
+**Referencias:** September 12th, Hitman 2, COD BO2 Zombies, Tombo Survivor, COD MW2 - No Russian /
+"No hay mejor vehiculo que la empatía que un juego" - Humberto Cervera /
 
-**Público Objetivo:** colombianos, mayores de 18 años.
-**Pitch/Propuesta de Valor:** PP es un juego survival por hordas en donde podras asumir el papel de un policía del esmad cuyo objetivo es disolver una protesta de la forma menos pacífica posible. 
-**Aesthetics** -> Tipo de diversión objetivo (de los 8 tipos según Marc Leblanc): Descubrimiento de dinámicas emergentes, Narrativa emergente; que el jugador comprenda las atrocidades que está cometiendo la policía en Colombia, asumiendo el papel del agresor.
+**Público Objetivo:** colombianos, mayores de 18 años./
+**Pitch/Propuesta de Valor:** PP es un juego survival por hordas en donde podras asumir el papel de un policía del esmad cuyo objetivo es disolver una protesta de la forma menos pacífica posible. /
+**Aesthetics** -> Tipo de diversión objetivo (de los 8 tipos según Marc Leblanc): Descubrimiento de dinámicas emergentes, Narrativa emergente; que el jugador comprenda las atrocidades que está cometiendo la policía en Colombia, asumiendo el papel del agresor. /
 
 **Mecánicas:**
 - ¿Puertas?
