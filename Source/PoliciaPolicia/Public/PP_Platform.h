@@ -44,7 +44,7 @@ protected:
 	virtual void BeginPlay() override;
 	
 	UFUNCTION(BlueprintCallable, Category = "Movement")
-	void Move();
+	void Move(float DeltaTime);
 
 public:	
 	// Called every frame

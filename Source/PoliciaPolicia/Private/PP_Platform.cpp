@@ -34,18 +34,18 @@ void APP_Platform::BeginPlay()
 void APP_Platform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	Move();
+	Move(DeltaTime);
 
 }
 
-void APP_Platform::Move()
+void APP_Platform::Move(float DeltaTime)
 {
 	FVector upDirection = UKismetMathLibrary::GetUpVector(GetActorRotation());
 	if (!bIsGoingUp) {
 		upDirection *= -1;
 	}
 
-	FVector currentVelocity = upDirection * Speed;
+	FVector currentVelocity = upDirection * Speed * DeltaTime;
 	FVector newPosition = GetActorLocation() + currentVelocity;
 	SetActorLocation(newPosition);
 
