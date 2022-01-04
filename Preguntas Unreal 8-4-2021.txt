@@ -1,0 +1,10 @@
+Event Manager
+
+
+
+set /A x = 0
+for /r %i in (*) do (
+Set /A result=x/2
+Set /A remainder=x-result*2
+if %remainder% EQU 1 git add %i
+)

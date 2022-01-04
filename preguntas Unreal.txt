@@ -1,0 +1,12 @@
+Efectos de impacto:
+-03:41 ImpactNormal.Rotation()
+
+varias tareas a la vez
+como saber cuando se ha aprendido lo suficiente
+
+
+
+- El blueprint (las variables del aiming) las sobreescribe el editor sobre el codigo?
+- Ver estados de la animacion en play
+- hacer que pase a la siguiente animacion cuando va cayendo
+- Hacer animaciones

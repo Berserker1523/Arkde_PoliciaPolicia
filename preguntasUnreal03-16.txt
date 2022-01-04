@@ -1,0 +1,6 @@
+Preguntas Unreal
+
+como sabes que parametros tiene el sistema de particulas, pq parece violeta?
+include weapons/projectile
+visible anywhere
+projectile choca contra el otro personaje y la llave pero no con el mismo, 

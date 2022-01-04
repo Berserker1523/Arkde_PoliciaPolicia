@@ -1,0 +1,6 @@
+El disparo esta desfasado con respecto al arma
+AnimNotifyState es una clase abstracta?
+Diagramas de clases para empezar a codificar, en el curso siempre se ven que las cosas se piensan en el momento
+como seria para poner varias animaciones en el combo
+
+MontageSection

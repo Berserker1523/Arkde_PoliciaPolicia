@@ -1,0 +1,6 @@
+que son colisiones por query y por physics
+pq se le pone una A al principio del nombre a las clases, pero cuando se importa se pone el nombre solo
+pq los :: en vez de colocar solo el nombre de la funcion
+
+LUA
+me habias dicho que no se podian hacer animaciones como en unity pero esta el timeline
