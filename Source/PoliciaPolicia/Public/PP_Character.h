@@ -1,11 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "PP_Character.generated.h"
-
 
 class UCameraComponent;
 class USpringArmComponent;
@@ -13,6 +10,7 @@ class APP_Weapon;
 class UAnimMontage;
 class UAnimInstance;
 class UPP_HealthComponent;
+class UCharacterMovementComponent;
 
 UCLASS()
 class POLICIAPOLICIA_API APP_Character : public ACharacter
@@ -31,15 +29,26 @@ protected:
 	UCameraComponent* TPSCameraComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UCharacterMovementComponent* CharacterMovementComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UCapsuleComponent* MeleeDetectorComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintreadOnly, Category = "Components")
 	UPP_HealthComponent* HealthComponent;
 
 protected:
+	UPROPERTY(BlueprintReadOnly, category = "Movement")
+	float walkSpeed;
+
+	UPROPERTY(BlueprintReadOnly, category = "Movement")
+	float runSpeed;
+
+	UPROPERTY(BlueprintReadOnly, category = "Movement")
+	bool bIsRunning;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, category = "Aiming")
-	bool bUserFIrstPersonView;
+	bool bUseFirstPersonView;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, category = "Aiming")
 	bool bIsLookInverted;
@@ -100,9 +109,9 @@ protected:
 	void MoveForward(float value);
 	void MoveRight(float value);
 
-	virtual void Jump() override;
-	virtual void StopJumping() override;
-
+	void SwitchView();
+	void SwitchRunning();
+;
 	void CreateInitialWeapon();
 
 	void StartWeaponAction();
@@ -110,6 +119,7 @@ protected:
 
 	void StartMelee();
 	void StopMelee();
+
 	UFUNCTION()
 	void MakeMeleeDamage(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 

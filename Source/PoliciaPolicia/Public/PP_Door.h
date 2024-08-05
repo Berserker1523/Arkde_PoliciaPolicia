@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -30,13 +28,13 @@ protected:
 	UBoxComponent* KeyZoneColliderComponent;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "My Door")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Door")
 	float OpenAngle;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "My Door")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Door")
 	bool bIsOpen;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Door")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Door")
 	FName DoorTag;
 
 public:	

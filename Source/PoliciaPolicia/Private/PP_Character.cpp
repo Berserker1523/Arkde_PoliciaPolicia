@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "PP_Character.h"
 #include "PoliciaPolicia.h"
 #include "Weapons/PP_Weapon.h"
@@ -14,16 +12,18 @@
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Components/PP_HealthComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 APP_Character::APP_Character()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	bIsRunning = false;
 	bIsDoingMelee = false;
 	bCanUseWeapon = true;
-	bUserFIrstPersonView = true;
+	bUseFirstPersonView = true;
 	FPSCameraSocketName = "SCK_Camera";
 	MeleeSocketName = "SCK_Melee";
 	MeleeDamage = 50.0f;
@@ -41,6 +41,10 @@ APP_Character::APP_Character()
 	TPSCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("TPS_CameraComponent"));
 	TPSCameraComponent->SetupAttachment(SpringArmComponent);
 
+	CharacterMovementComponent = GetCharacterMovement();
+	walkSpeed = CharacterMovementComponent->MaxWalkSpeed;
+	runSpeed = walkSpeed * 1.25f;
+
 	MeleeDetectorComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("MeleeDetectorComponent"));
 	MeleeDetectorComponent->SetupAttachment(GetMesh(), MeleeSocketName);
 	MeleeDetectorComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -52,15 +56,11 @@ APP_Character::APP_Character()
 
 FVector APP_Character::GetPawnViewLocation() const
 {
-	if (IsValid(FPSCameraComponent) && bUserFIrstPersonView)
-	{
+	if (IsValid(FPSCameraComponent) && bUseFirstPersonView)
 		return FPSCameraComponent->GetComponentLocation();
-	}
-	
-	if (IsValid(TPSCameraComponent) && !bUserFIrstPersonView)
-	{
+
+	if (IsValid(TPSCameraComponent) && !bUseFirstPersonView)
 		return TPSCameraComponent->GetComponentLocation();
-	}
 
 	return Super::GetPawnViewLocation();
 }
@@ -77,23 +77,19 @@ void APP_Character::BeginPlay()
 void APP_Character::InitializeReferences()
 {
 	if (IsValid(GetMesh()))
-	{
 		MyAnimInstance = GetMesh()->GetAnimInstance();
-	}
-	
 }
 
 // Called every frame
 void APP_Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void APP_Character::MoveForward(float value)
 {
-	AddMovementInput(UKismetMathLibrary::GetForwardVector(GetActorRotation()) * value);
-	//AddMovementInput(GetActorForwardVector() * value); -> the same than above
+	//AddMovementInput(UKismetMathLibrary::GetForwardVector(GetActorRotation()) * value); the same than below
+	AddMovementInput(GetActorForwardVector() * value);
 }
 
 void APP_Character::MoveRight(float value)
@@ -104,16 +100,6 @@ void APP_Character::MoveRight(float value)
 void APP_Character::AddControllerPitchInput(float value)
 {
 	Super::AddControllerPitchInput(bIsLookInverted ? -value : value);
-}
-
-void APP_Character::Jump()
-{
-	Super::Jump();
-}
-
-void APP_Character::StopJumping()
-{
-	Super::StopJumping();
 }
 
 void APP_Character::CreateInitialWeapon()
@@ -132,35 +118,28 @@ void APP_Character::CreateInitialWeapon()
 void APP_Character::StartWeaponAction()
 {
 	if (!bCanUseWeapon)
-	{
 		return;
-	}
+
+	if (bIsRunning)
+		SwitchRunning();
 
 	if (IsValid(CurrentWeapon))
-	{
 		CurrentWeapon->StartAction();
-	}
 }
 
 void APP_Character::StopWeaponAction()
 {
 	if (!bCanUseWeapon)
-	{
 		return;
-	}
 
 	if (IsValid(CurrentWeapon))
-	{
 		CurrentWeapon->StopAction();
-	}
 }
 
 void APP_Character::StartMelee()
 {
 	if (bIsDoingMelee && !bCanMakeCombos)
-	{
 		return;
-	}
 
 	if (bCanMakeCombos)
 	{
@@ -173,15 +152,11 @@ void APP_Character::StartMelee()
 					CurrentComboMultiplier++;
 					SetComboEnable(false);
 				}
-				else 
-				{
+				else
 					return;
-				}
 			}
-			else 
-			{
+			else
 				return;
-			}
 		}
 	}
 
@@ -199,9 +174,7 @@ void APP_Character::StopMelee()
 void APP_Character::MakeMeleeDamage(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (IsValid(OtherActor))
-	{
 		UGameplayStatics::ApplyPointDamage(OtherActor, MeleeDamage * CurrentComboMultiplier, SweepResult.Location, SweepResult, GetInstigatorController(), this, nullptr);
-	}
 }
 
 // Called to bind functionality to input
@@ -215,8 +188,11 @@ void APP_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis("LookUp", this, &APP_Character::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookRight", this, &ACharacter::AddControllerYawInput);
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APP_Character::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APP_Character::StopJumping);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	PlayerInputComponent->BindAction("ChangeView", IE_Pressed, this, &APP_Character::SwitchView);
+	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &APP_Character::SwitchRunning);
 
 	PlayerInputComponent->BindAction("WeaponAction", IE_Pressed, this, &APP_Character::StartWeaponAction);
 	PlayerInputComponent->BindAction("WeaponAction", IE_Released, this, &APP_Character::StopWeaponAction);
@@ -255,4 +231,28 @@ void APP_Character::ResetCombo()
 {
 	SetComboEnable(false);
 	CurrentComboMultiplier = 1.0f;
+}
+
+void APP_Character::SwitchView()
+{
+	bUseFirstPersonView = !bUseFirstPersonView;
+
+	if (bUseFirstPersonView)
+	{
+		FPSCameraComponent->Activate();
+		SpringArmComponent->Deactivate();
+		TPSCameraComponent->Deactivate();
+	}
+	else
+	{
+		FPSCameraComponent->Deactivate();
+		SpringArmComponent->Activate();
+		TPSCameraComponent->Activate();
+	}
+}
+
+void APP_Character::SwitchRunning()
+{
+	bIsRunning = !bIsRunning;
+	CharacterMovementComponent->MaxWalkSpeed = bIsRunning ? runSpeed : walkSpeed;
 }
