@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -23,11 +21,11 @@ public:
 	void Victory(APP_Character* Character);
 
 	UFUNCTION()
-	void GameOver();
+	void GameOver(APP_Character* Character);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BP_Victory(APP_Character* Character);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BP_GameOver();
+	void BP_GameOver(APP_Character* Character);
 };

@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -7,20 +5,29 @@
 #include "PP_Rifle.generated.h"
 
 class UParticleSystem;
+struct FCollisionQueryParams;
+struct FTimerHandle;
 
 /**
- * 
+ *
  */
 UCLASS()
 class POLICIAPOLICIA_API APP_Rifle : public APP_Weapon
 {
 	GENERATED_BODY()
-	
+
 public:
 
 	APP_Rifle();
 
 protected:
+	FCollisionQueryParams TraceCollisionQueryParams;
+
+	FTimerHandle FireRateTimerHandle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	float FireRate;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "LineTrace|Debug")
 	bool bDrawLineTrace;
 
@@ -31,7 +38,7 @@ protected:
 	FName MuzzleSocketName;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effects")
-	FName TraceParamName;		
+	FName TraceParamName;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effects")
 	UParticleSystem* MuzzleEffect;
@@ -51,4 +58,12 @@ protected:
 
 	virtual void StopAction() override;
 
+	virtual void SetCharacterOwner(ACharacter* NewOwner) override;
+
+private:
+	void Fire();
+
+	void ManageHit(FVector EyeLocation, FVector& TraceEndPoint, FVector ShotDirection);
+
+	void CreateTraceParticle(FVector TraceEndPoint);
 };

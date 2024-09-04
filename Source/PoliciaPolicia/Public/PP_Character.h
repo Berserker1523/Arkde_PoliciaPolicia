@@ -4,13 +4,16 @@
 #include "GameFramework/Character.h"
 #include "PP_Character.generated.h"
 
-class UCameraComponent;
 class USpringArmComponent;
-class APP_Weapon;
-class UAnimMontage;
-class UAnimInstance;
-class UPP_HealthComponent;
+class UCameraComponent;
 class UCharacterMovementComponent;
+class UPP_HealthComponent;
+class UPP_IdleState;
+class UPP_MeleeState;
+class UPP_WeaponState;
+class UPP_MeleeCollider;
+class UPP_CharacterActionsStateModel;
+class APP_GameMode;
 
 UCLASS()
 class POLICIAPOLICIA_API APP_Character : public ACharacter
@@ -31,11 +34,23 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UCharacterMovementComponent* CharacterMovementComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UCapsuleComponent* MeleeDetectorComponent;
-
 	UPROPERTY(VisibleAnywhere, BlueprintreadOnly, Category = "Components")
 	UPP_HealthComponent* HealthComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintreadOnly, Category = "Components")
+	UPP_IdleState* IdleStateComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintreadOnly, Category = "Components")
+	UPP_MeleeState* MeleeStateComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintreadOnly, Category = "Components")
+	UPP_WeaponState* WeaponStateComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintreadOnly, Category = "Components")
+	UPP_MeleeCollider* MeleeColliderComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintreadOnly, Category = "Components")
+	UPP_CharacterActionsStateModel* CharacterActionsStateModelComponent;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, category = "Movement")
@@ -53,29 +68,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, category = "Aiming")
 	bool bIsLookInverted;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Weapon")
-	bool bCanUseWeapon;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Melee")
-	bool bIsDoingMelee;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Melee")
-	bool bCanMakeCombos;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Melee")
-	bool bIsComboEnable;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Melee")
-	float MeleeDamage;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Melee", meta = (EditCondition = bCanMakeCombos, ClampMin = 1.0, UIMin = 1.0))
-	float MaxComboMultiplier;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Melee", meta = (EditCondition = bCanMakeCombos, ClampMin = 1.0, UIMin = 1.0))
-	float CurrentComboMultiplier;
-
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, category = "Aiming")
-	FName FPSCameraSocketName;	
+	FName FPSCameraSocketName;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, category = "Melee")
 	FName MeleeSocketName;
@@ -83,66 +77,40 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Key")
 	TArray<FName> DoorKeys;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-	TSubclassOf<APP_Weapon> InitialWeaponClass;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Weapon")
-	APP_Weapon* CurrentWeapon;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
-	UAnimMontage* MeleeMontage;
-
-	UAnimInstance* MyAnimInstance;
+	APP_GameMode* GameMode;
 
 public:
-	// Sets default values for this character's properties
 	APP_Character();
+
+	virtual void BeginPlay() override;
+
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void AddControllerPitchInput(float value) override;
 
 	virtual FVector GetPawnViewLocation() const override;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	void SwitchRunning();
 
-	void InitializeReferences();
+	void AddKey(FName NewKey);
+	bool HasKey(FName Key);
 
+private:
 	void MoveForward(float value);
 	void MoveRight(float value);
 
 	void SwitchView();
-	void SwitchRunning();
-;
-	void CreateInitialWeapon();
-
-	void StartWeaponAction();
-	void StopWeaponAction();
-
-	void StartMelee();
-	void StopMelee();
 
 	UFUNCTION()
-	void MakeMeleeDamage(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnHealthChanged(UPP_HealthComponent* CurrentHealthComponent, AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+public:
+	FName GetFPSCameraSocketName() const { return FPSCameraSocketName; }
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	bool GetIsRunning() const { return bIsRunning; }
 
-	virtual void AddControllerPitchInput(float value) override;
+	UPP_IdleState* GetIdleStateComponent() const { return IdleStateComponent; }
 
-	void AddKey(FName NewKey);
+	UPP_MeleeState* GetMeleeStateComponent() const { return MeleeStateComponent; }
 
-	bool HasKey(FName Key);
-
-	void SetMeleeDetectorCollision(ECollisionEnabled::Type NewCollisionState);	
-
-	void SetMeleeState(bool NewState);
-
-	UFUNCTION(BlueprintCallable)
-	void SetComboEnable(bool NewState);
-
-	UFUNCTION(BlueprintCallable)
-	void ResetCombo();
+	UPP_WeaponState* GetWeaponStateComponent() const { return WeaponStateComponent; }
 };

@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -28,19 +26,13 @@ protected:
 	ACharacter* CurrentOwnerCharacter;
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Weapon")
 	void BP_StartAction();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Weapon")
 	void BP_StopAction();
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+public:
 	UFUNCTION(BlueprintCallable)
 	virtual void StartAction();
 
@@ -48,6 +40,5 @@ public:
 	virtual void StopAction();
 
 	UFUNCTION(BlueprintCallable)
-	void SetCharacterOwner(ACharacter* NewOwner);
-
+	virtual void SetCharacterOwner(ACharacter* NewOwner);
 };

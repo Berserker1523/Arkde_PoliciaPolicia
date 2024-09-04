@@ -3,11 +3,9 @@
 #include "Components/BoxComponent.h"
 #include "PP_Character.h"
 
-// Sets default values
 APP_Door::APP_Door()
 {
-	// Set this actor to call Tick() every frame. You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	OpenAngle = -90.0f;
 	DoorTag = "KeyA";
 
@@ -28,7 +26,6 @@ APP_Door::APP_Door()
 	KeyZoneColliderComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 }
 
-// Called when the game starts or when spawned
 void APP_Door::BeginPlay()
 {
 	Super::BeginPlay();
@@ -40,19 +37,12 @@ void APP_Door::CheckKeyFromPlayer(UPrimitiveComponent* OverlappedComponent, AAct
 	if (bIsOpen)
 		return;
 
-	if (IsValid(OtherActor))
-	{
-		APP_Character* OverlappedCharacter = Cast<APP_Character>(OtherActor);
-		if (IsValid(OverlappedCharacter) && OverlappedCharacter->HasKey(DoorTag))
-			OpenDoor();
-	}
-}
+	if (!IsValid(OtherActor))
+		return;
 
-// Called every frame
-void APP_Door::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
+	APP_Character* OverlappedCharacter = Cast<APP_Character>(OtherActor);
+	if (IsValid(OverlappedCharacter) && OverlappedCharacter->HasKey(DoorTag))
+		OpenDoor();
 }
 
 void APP_Door::OpenDoor()

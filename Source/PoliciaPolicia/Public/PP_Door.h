@@ -37,12 +37,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Door")
 	FName DoorTag;
 
-public:	
-	// Sets default values for this actor's properties
+public:
 	APP_Door();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
@@ -51,9 +49,6 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "My Door")
 	void BP_OpenDoor();
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+public:
 	void OpenDoor();
 };
