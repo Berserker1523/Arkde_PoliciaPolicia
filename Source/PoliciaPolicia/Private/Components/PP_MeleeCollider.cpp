@@ -14,7 +14,7 @@ UPP_MeleeCollider::UPP_MeleeCollider()
 void UPP_MeleeCollider::BeginPlay()
 {
 	Super::BeginPlay();
-	MeleeState = GetOwner()->FindComponentByClass<UPP_MeleeState>();
+	UPP_MeleeState* MeleeState = GetOwner()->FindComponentByClass<UPP_MeleeState>();
 	OnComponentBeginOverlap.AddDynamic(MeleeState, &UPP_MeleeState::MakeMeleeDamage);
 }
 

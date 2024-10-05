@@ -7,6 +7,8 @@
 
 class APP_Character;
 class UPP_CharacterActionsStateModel;
+class UAnimInstance;
+class UAnimMontage;
 
 UCLASS(ClassGroup = (Policia), meta = (BlueprintSpawnableComponent))
 class POLICIAPOLICIA_API UPP_MeleeState : public UActorComponent, public IPP_CharacterActionState
